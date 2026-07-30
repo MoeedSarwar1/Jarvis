@@ -17,7 +17,6 @@ def bye():
 
 @app.command()
 def ask(message: list[str]):
-    print(f"You asked: {" ".join(message)}")
     response = ask_llm(" ".join(message))
     print(f"[bold cyan]{response}[/bold cyan]")
 
