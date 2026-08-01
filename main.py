@@ -1,6 +1,8 @@
 import typer
 from rich import print
 from core.client import ask_llm
+from core.greetings import greet
+from core.shutdown import shutdown
 from config import constants
 
 app = typer.Typer()
@@ -8,13 +10,13 @@ app = typer.Typer()
 
 @app.command()
 def kage():
-    greetings = ask_llm("greet me, tell me you name, and ask what i want")
-    print(f"Kage: {greetings}")
+    print(f"[#4C566A]影: {greet()}[/#4C566A]")
 
     text = None
     while text is None or text.lower() not in constants.quiting:
-        text = input("You: ")
+        text = input("> ")
         if text.lower() in constants.quiting:
+            print(f"[#4C566A]影: {shutdown()}[/#4C566A]")
             break
         response = ask_llm(text)
         print(f"Kage: {response}")
