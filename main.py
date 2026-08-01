@@ -1,6 +1,7 @@
 import typer
 from rich import print
 from core.client import client, ask_llm
+from config import constants
 
 app = typer.Typer()
 
@@ -16,9 +17,14 @@ def bye():
 
 
 @app.command()
-def ask(message: list[str]):
-    response = ask_llm(" ".join(message))
-    print(f"[bold cyan]{response}[/bold cyan]")
+def ask():
+    text = None
+    while text is None or text not in constants.quiting:
+        text = input("You: ")
+        if text.lower() in constants.quiting:
+            break
+        response = ask_llm(text)
+        print(f"Kage: {response}")
 
 
 if __name__ == "__main__":

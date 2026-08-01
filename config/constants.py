@@ -1,0 +1,2 @@
+
+quiting = ['shutdown', 'exit',  'quit']
