@@ -19,7 +19,7 @@ def kage():
             print(f"[#4C566A]影: {shutdown()}[/#4C566A]")
             break
         response = ask_llm(text)
-        print(f"Kage: {response}")
+        print(f"[#4C566A]影: {response}[/#4C566A]")
 
 
 if __name__ == "__main__":
