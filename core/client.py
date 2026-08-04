@@ -23,7 +23,8 @@ def ask_llm(message: str) -> str:
         )
         msg = response.choices[0].message
 
-        if msg.tool_calls:
+        attempts = 0
+        while msg.tool_calls and attempts < 6:
             call = msg.tool_calls[0]
             tool_name = call.function.name
             args = json.loads(call.function.arguments)
@@ -37,12 +38,13 @@ def ask_llm(message: str) -> str:
                 messages=conversation,
                 tools=TOOLS
             )
+            attempts += 1
             msg = response.choices[0].message
-            reply = msg.content
 
-        else:
-            reply = msg.content
+        reply = msg.content
 
+        if not reply:
+            return error()
         conversation.append({'role': 'assistant', 'content': reply})
         return reply
     except (APIError, AuthenticationError, APIConnectionError):

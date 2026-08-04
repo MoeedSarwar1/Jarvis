@@ -1,7 +1,7 @@
 from pathlib import Path
 
 personality = Path('./assets/prompts')
-personality_files = sorted(personality.glob("**.md"))
+personality_files = sorted(personality.glob("*.md"))
 
 contents = []
 

@@ -8,18 +8,37 @@ def get_time_date():
     return date
 
 
+def get_home_directory():
+    home = Path("~").expanduser().resolve()
+    return str(home)
+
+
 def get_file_data(file_name: str):
-    file_results = Path(file_name)
+    home = Path("~").expanduser().resolve()
+    target = Path(file_name).expanduser().resolve()
+
+    if not target.is_relative_to(home) or any(part.startswith(".") for part in target.parts):
+        return "Out of Bounds"
+
     try:
-        return file_results.read_text()
+        return target.read_text()
     except FileNotFoundError:
         return "Out of Bounds"
 
 
 def get_folder_data(folder_name: str):
+    home = Path("~").expanduser().resolve()
+    target = Path(folder_name).expanduser().resolve()
+
+    if not target.is_relative_to(home) or any(part.startswith(".") for part in target.parts):
+        return "Out of Bounds"
+
     try:
-        file_results = os.listdir(folder_name)
-        return "\n\n".join(file_results)
+        file_results = os.listdir(target)
+        visible = [item for item in file_results if not item.startswith(".")]
+        if visible:
+            return "\n\n".join(visible)
+        return "Out of Bounds"
     except FileNotFoundError:
         return "Out of Bounds"
 
@@ -71,10 +90,24 @@ TOOLS = [
             }
         }
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_home_directory",
+            "description": "It returns the home directory",
+            "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        }
+    },
+
 ]
 
 tool_dictionary = {
     "get_time_date": get_time_date,
     "get_file_data": get_file_data,
-    "get_folder_data": get_folder_data
+    "get_folder_data": get_folder_data,
+    "get_home_directory": get_home_directory
 }
