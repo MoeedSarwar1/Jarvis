@@ -1,3 +1,4 @@
+import os
 from openai import OpenAI, APIError, AuthenticationError, APIConnectionError
 from config.settings import settings
 from core.personality import SYSTEM_PROMPTS
@@ -15,12 +16,21 @@ conversation = [
 
 def ask_llm(message: str) -> str:
     try:
+        if os.path.exists("conversation.json"):
+            with open("conversation.json", "r") as f:
+                conversation = json.load(f)
+        else:
+            conversation = [
+                {'role': 'system', 'content': SYSTEM_PROMPTS}
+            ]
         conversation.append({'role': 'user', 'content': message})
         response = client.chat.completions.create(
             model=settings.ai_model,
             messages=conversation,
             tools=TOOLS
         )
+        if not response or not response.choices:
+            return error()
         msg = response.choices[0].message
 
         attempts = 0
@@ -38,7 +48,10 @@ def ask_llm(message: str) -> str:
                 messages=conversation,
                 tools=TOOLS
             )
+            if not response or not response.choices:
+                return error()
             attempts += 1
+
             msg = response.choices[0].message
 
         reply = msg.content
@@ -46,6 +59,9 @@ def ask_llm(message: str) -> str:
         if not reply:
             return error()
         conversation.append({'role': 'assistant', 'content': reply})
+        with open("conversation.json", "w") as f:
+            json.dump(conversation, f)
         return reply
+
     except (APIError, AuthenticationError, APIConnectionError):
         return error()
