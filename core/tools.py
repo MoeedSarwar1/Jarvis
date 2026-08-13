@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+import pymupdf4llm
 import os
 
 
@@ -11,6 +12,19 @@ def get_time_date():
 def get_home_directory():
     home = Path("~").expanduser().resolve()
     return str(home)
+
+
+def get_pdf_data(file_name: str):
+    home = Path("~").expanduser().resolve()
+    target = Path(file_name).expanduser().resolve()
+
+    if not target.is_relative_to(home) or any(part.startswith(".") for part in target.parts):
+        return "Out of Bounds"
+
+    try:
+        return pymupdf4llm.to_markdown(file_name)
+    except FileNotFoundError:
+        return "Out of Bounds"
 
 
 def get_file_data(file_name: str):
@@ -53,6 +67,23 @@ TOOLS = [
                 "type": "object",
                 "properties": {},
                 "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_pdf_data",
+            "description": "Returns the text or data within a pdf",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_name": {
+                        "type": "string",
+                        "description": "Name or path of the file to read"
+                    },
+                },
+                "required": ["file_name"]
             }
         }
     },
@@ -109,5 +140,6 @@ tool_dictionary = {
     "get_time_date": get_time_date,
     "get_file_data": get_file_data,
     "get_folder_data": get_folder_data,
-    "get_home_directory": get_home_directory
+    "get_home_directory": get_home_directory,
+    "get_pdf_data": get_pdf_data
 }

@@ -4,25 +4,23 @@ from config.settings import settings
 from core.personality import SYSTEM_PROMPTS
 from core.tools import TOOLS, tool_dictionary
 from core.error import error
+from config.logger import logger
 import json
 
 client = OpenAI(api_key=settings.openrouter_api_key,
                 base_url=settings.openrouter_base_url)
 
-conversation = [
-    {'role': 'system', 'content': SYSTEM_PROMPTS}
-]
+if os.path.exists("conversation.json"):
+    with open("conversation.json", "r") as f:
+        conversation = json.load(f)
+else:
+    conversation = [
+        {'role': 'system', 'content': SYSTEM_PROMPTS}
+    ]
 
 
 def ask_llm(message: str) -> str:
     try:
-        if os.path.exists("conversation.json"):
-            with open("conversation.json", "r") as f:
-                conversation = json.load(f)
-        else:
-            conversation = [
-                {'role': 'system', 'content': SYSTEM_PROMPTS}
-            ]
         conversation.append({'role': 'user', 'content': message})
         response = client.chat.completions.create(
             model=settings.ai_model,
@@ -40,7 +38,7 @@ def ask_llm(message: str) -> str:
             args = json.loads(call.function.arguments)
             func = tool_dictionary[tool_name]
             result = func(**args)
-            conversation.append(msg)
+            conversation.append(msg.model_dump())
             conversation.append(
                 {'role': 'tool', 'tool_call_id': call.id, 'content': result})
             response = client.chat.completions.create(
@@ -63,5 +61,6 @@ def ask_llm(message: str) -> str:
             json.dump(conversation, f)
         return reply
 
-    except (APIError, AuthenticationError, APIConnectionError):
+    except (APIError, AuthenticationError, APIConnectionError) as err:
+        logger.error(err)
         return error()

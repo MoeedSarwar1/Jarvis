@@ -1,4 +1,22 @@
 from core.tools import get_time_date, get_file_data, get_folder_data
+from unittest.mock import Mock, patch
+from core.client import ask_llm
+import shutil
+import tempfile
+from pathlib import Path
+
+
+@patch("core.client.client")
+def test_ask_llm_returns_reply(mock_client):
+    fake_response = Mock()
+    fake_response.choices = [Mock()]
+    fake_response.choices[0].message.content = "fake reply text"
+    fake_response.choices[0].message.tool_calls = None
+
+    mock_client.chat.completions.create.return_value = fake_response
+
+    result = ask_llm("hello")
+    assert result == "fake reply text"
 
 
 def test_get_time_date():
@@ -7,11 +25,15 @@ def test_get_time_date():
     assert "at" in date
 
 
-def test_get_file_data(tmp_path):
-    test_file = tmp_path / "sample.txt"
-    test_file.write_text("hello world")
-    result = get_file_data(str(test_file))
-    assert result == "hello world"
+def test_get_file_data():
+    home_temp_dir = Path(tempfile.mkdtemp(dir=Path.home()))
+    try:
+        test_file = home_temp_dir / "sample.txt"
+        test_file.write_text("hello world")
+        result = get_file_data(str(test_file))
+        assert result == "hello world"
+    finally:
+        shutil.rmtree(home_temp_dir)
 
 
 def test_get_file_data_false():
