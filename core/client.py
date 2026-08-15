@@ -11,7 +11,7 @@ client = OpenAI(api_key=settings.openrouter_api_key,
                 base_url=settings.openrouter_base_url)
 
 if os.path.exists("conversation.json"):
-    with open("conversation.json", "r") as f:
+    with open("conversation.json", "r", encoding='utf-8', errors='replace') as f:
         conversation = json.load(f)
 else:
     conversation = [
