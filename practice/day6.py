@@ -41,12 +41,12 @@ print(word)
 # Question 5
 
 
-def count_long(list):
-    collection = []
-    for word in list:
+def count_long(words):
+    long_words = []
+    for word in words:
         if len(word) > 3:
-            collection.append(word)
-    return len(collection)
+            long_words.append(word)
+    return len(long_words)
 
 
 x = count_long(["princess", "jaadu", "ab"])
