@@ -35,3 +35,21 @@ def find_slot(numbers, target):
 
 
 print(find_slot([1, 23, 32, 4, 3], 3))  # expected 4
+
+
+def second_largest(numbers):
+    biggest = numbers[0]
+    second = smallest(numbers)
+    for n in numbers:
+        if n > biggest:
+            biggest = n
+    for n in numbers:
+        if n < biggest and n > second:
+            second = n
+
+    return second
+
+
+print(second_largest([9, 7, 2]))  # 7
+print(second_largest([4, 9, 2, 7]))  # 7
+print(second_largest([5, 5, 3]))  # 3
