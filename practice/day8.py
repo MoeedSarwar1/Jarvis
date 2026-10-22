@@ -21,3 +21,5 @@ def word_count(words):
 
 
 print(word_count(["tea", "milk", "tea"]))  # {'tea': 2, 'milk': 1}
+print(word_count([]))  # {}
+print(word_count(["a"]))  # {"a":1}
