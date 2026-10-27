@@ -6,7 +6,8 @@ def longest_word(words):
 
     return word
 
-print(longest_word(["ali", "kashannn", "jamal"])) #expected kashannn
+
+print(longest_word(["ali", "kashannn", "jamal"]))  # expected kashannn
 
 
 def count_letter(word, target):
@@ -15,16 +16,17 @@ def count_letter(word, target):
         if w == target:
             count += 1
 
-
     return count
 
-print(count_letter("banana","a")) #expected: 3
+
+print(count_letter("banana", "a"))  # expected: 3
 
 
 def word_lengths(words):
     counts = {}
     for w in words:
-        counts[w] =  len(w)
+        counts[w] = len(w)
     return counts
 
-print(word_lengths(["go", "tea","go","duffer"])) #expected: {"go": 2, "tea": 3}
+
+print(word_lengths(["go", "tea", "go", "duffer"]))  # expected: {"go": 2, "tea": 3}
